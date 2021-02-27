@@ -1,7 +1,7 @@
 #include "HX711.h"
 
 
-// check the git update
+
 #define DT  A0
 #define SCK A1
 HX711 scale;
