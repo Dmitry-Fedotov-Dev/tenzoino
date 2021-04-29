@@ -16,6 +16,17 @@ float calibration_factor = -14.15;
 
 class TENZO : public HX711 {
 public:
+    void get_ready(byte dt, byte sck, float calibration_factor){
+      this->begin(dt, sck);
+      this->set_scale();
+      this->tare();
+      this->set_scale(calibration_factor);
+      if (this->is_ready()){
+        return "Gage is ready to work";
+      } else {
+        return "Gage is not ready";
+      }
+    }
     float get_delta(float m_last_count) {
       return m_last_count - this->get_units() * konvert;
    }
@@ -46,10 +57,6 @@ float delta2;
 float delta3;
 float delta4;
 
-
-
-
-
 String print_value;
 
 void setup() {
@@ -60,25 +67,10 @@ void setup() {
   butt1.setType(HIGH_PULL);
   butt1.setDirection(NORM_OPEN);
   
-  gage1.begin(DT1, SCK1);
-  gage1.set_scale();
-  gage1.tare();
-  gage1.set_scale(calibration_factor);
-
-  gage2.begin(DT2, SCK2);
-  gage2.set_scale();
-  gage2.tare();
-  gage2.set_scale(calibration_factor);
-
-  gage3.begin(DT3, SCK3);
-  gage3.set_scale();
-  gage3.tare();
-  gage3.set_scale(calibration_factor);
-
-  gage4.begin(DT4, SCK4);
-  gage4.set_scale();
-  gage4.tare();
-  gage4.set_scale(calibration_factor);
+  gage1.get_ready(DT1, SCK1, calibration_factor);
+  gage2.get_ready(DT2, SCK2, calibration_factor);
+  gage3.get_ready(DT3, SCK3, calibration_factor);
+  gage4.get_ready(DT4, SCK4, calibration_factor);
 
   Serial.println("Gages are ready to work!");
 }
