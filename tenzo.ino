@@ -45,7 +45,6 @@ public:
       return m_last_count;
   }
 protected:
-  HX711 m_hx711;
   float m_last_count;
 };
 
