@@ -1,19 +1,30 @@
 #include "HX711.h"
 #include "GyverButton.h"
 
-#define DT1  A0
-#define SCK1 A1
-#define DT2  A2
-#define SCK2 A3
-#define DT3  A4
-#define SCK3 A5
-#define DT4  A6
-#define SCK4 A7
 #define BTN_PIN 3
+// Определяем пины DT и SCK:
+byte dt[4];
+byte sck[4];
+
+dt[0] = A0;
+dt[1] = A2;
+dt[2] = A4;
+dt[3] = A6;
+
+sck[0] = A1;
+sck[1] = A3;
+sck[2] = A5;
+sck[3] = A7;
 
 float konvert = 0.035274 * 0.3404255319;
 float calibration_factor = -14.15;
+bool flag;
+int exp_count = 0;
 
+float units[4];
+float delta[4];
+
+// Делаем свою надстройку над классом HX711:
 class TENZO : public HX711 {
 public:
     void get_ready(byte dt, byte sck, float calibration_factor){
@@ -38,27 +49,11 @@ protected:
   float m_last_count;
 };
 
-TENZO gage1;
-TENZO gage2;
-TENZO gage3;
-TENZO gage4;
+TENZO gages[4];
 GButton butt1(BTN_PIN);
 
-bool flag;
-int exp_count = 0;
-
-float units1;
-float units2;
-float units3;
-float units4;
-
-float delta1;
-float delta2;
-float delta3;
-float delta4;
-
 String print_value;
-
+int array_size = sizeof(gages[]);
 void setup() {
   Serial.begin(9600);
   butt1.setDebounce(50);
@@ -66,22 +61,20 @@ void setup() {
   butt1.setClickTimeout(600);
   butt1.setType(HIGH_PULL);
   butt1.setDirection(NORM_OPEN);
-  
-  gage1.get_ready(DT1, SCK1, calibration_factor);
-  gage2.get_ready(DT2, SCK2, calibration_factor);
-  gage3.get_ready(DT3, SCK3, calibration_factor);
-  gage4.get_ready(DT4, SCK4, calibration_factor);
 
+  for (i = 0; i < array_size; i++){
+    gages[i].get_ready(dt[i], sck[i], calibration_factor);
+  }
+  
   Serial.println("Gages are ready to work!");
 }
 
 void loop() {
     butt1.tick();
-    units1 = gage1.get_units() * konvert;
-    units2 = gage2.get_units() * konvert;
-    units3 = gage3.get_units() * konvert;
-    units4 = gage4.get_units() * konvert;
-    print_value = "Gage #1:   " + (String)units1 + "    " + "Gage #2: " + (String)units2 + "    " + "Gage #3: " + (String)units3 + "    " + "Gage #4: " + (String)units4; 
+    for (i = 0; i < array_size; i++){
+      units[i] = gages[i].get_units(); 
+    }
+    print_value = "Gage #1:   " + (String)units[0] + "    " + "Gage #2: " + (String)units[1] + "    " + "Gage #3: " + (String)units[2] + "    " + "Gage #4: " + (String)units[3]; 
     Serial.println(print_value);
     if (butt1.isSingle()) {
       flag = true;
@@ -90,11 +83,10 @@ void loop() {
       while (flag == true){
         butt1.tick();
         
-        delta1 = gage1.get_delta(units1);
-        delta2 = gage2.get_delta(units2);
-        delta3 = gage3.get_delta(units3);
-        delta4 = gage4.get_delta(units4);
-        print_value = "Expiriment #" + (String)exp_count + " | " + "Gage #1:   " + (String)delta1 + "    " + "Gage #2: " + (String)delta2 + "    " + "Gage #3: " + (String)delta3 + "    " + "Gage #4: " + (String)delta4;
+        for (i = 0; i < array_size; i++){
+          delta[i] = gages[i].get_delta(units[i]);
+        }
+        print_value = "Expiriment #" + (String)exp_count + " | " + "Gage #1:   " + (String)delta[0] + "    " + "Gage #2: " + (String)delta[1] + "    " + "Gage #3: " + (String)delta[2] + "    " + "Gage #4: " + (String)delta[3];
         Serial.println(print_value);
         if (butt1.isSingle()){
         flag = false;
