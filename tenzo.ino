@@ -2,19 +2,6 @@
 #include "GyverButton.h"
 
 #define BTN_PIN 3
-// Определяем пины DT и SCK:
-
-
-byte dt[4] = {A0, A2, A4, 9};
-byte sck[4] = {A1, A3, A5, 10};
-
-float konvert = 0.035274 * 0.3404255319;
-float calibration_factor = -14.15;
-bool flag;
-int exp_count = 0;
-
-float units[4];
-float delta[4];
 
 // Делаем свою надстройку над классом HX711:
 class TENZO : public HX711 {
@@ -37,6 +24,19 @@ protected:
 
 TENZO gages[4];
 GButton butt1(BTN_PIN);
+
+// Определяем пины DT и SCK:
+byte dt[4] = {A0, A2, A4, 9};
+byte sck[4] = {A1, A3, A5, 10};
+// Определяем переменные:
+float konvert = 0.035274 * 0.3404255319;
+float calibration_factor = -14.15;
+bool flag;
+int exp_count = 0;
+float units[4];
+float delta[4];
+
+
 
 String print_value;
 int array_size = 4;
