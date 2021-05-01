@@ -3,6 +3,8 @@
 
 #define BTN_PIN 3
 // Определяем пины DT и SCK:
+
+
 byte dt[4] = {A0, A2, A4, 9};
 byte sck[4] = {A1, A3, A5, 10};
 
@@ -37,7 +39,7 @@ TENZO gages[4];
 GButton butt1(BTN_PIN);
 
 String print_value;
-int array_size = sizeof(gages);
+int array_size = 4;
 void setup() {
   Serial.begin(9600);
   butt1.setDebounce(50);
