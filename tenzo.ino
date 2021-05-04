@@ -8,11 +8,11 @@ byte dt[] = {A0, A2, A4, 9};
 byte sck[] = {A1, A3, A5, 10};
 
 // Определяем переменные:
-const int number_of_gages = sizeof(dt)/sizeof(dt[0]);
+const uint8_t number_of_gages = sizeof(dt)/sizeof(dt[0]);
 float konvert = 0.035274 * 0.3404255319;
 float calibration_factor = -14.15;
 bool flag;
-uint8_t exp_count = 0;
+uint16_t exp_count = 0;
 float units[number_of_gages];
 float delta[number_of_gages];
 String print_value;
