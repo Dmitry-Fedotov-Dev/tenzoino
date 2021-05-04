@@ -9,8 +9,8 @@ byte sck[] = {A1, A3, A5, 10};
 
 // Определяем переменные:
 const uint8_t number_of_gages = sizeof(dt)/sizeof(dt[0]);
-float konvert = 0.035274 * 0.3404255319;
-float calibration_factor = -14.15;
+const float konvert = 0.035274 * 0.3404255319; // Временная константа для конвертирования необработанных попугаев с HX711
+const float calibration_factor = -14.15;
 bool flag;
 uint16_t exp_count = 0;
 float units[number_of_gages];
