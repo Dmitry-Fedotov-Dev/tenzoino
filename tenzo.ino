@@ -3,6 +3,21 @@
 
 #define BTN_PIN 3
 
+// Определяем пины DT и SCK:
+byte dt[] = {A0, A2, A4, 9};
+byte sck[] = {A1, A3, A5, 10};
+
+// Определяем переменные:
+const int number_of_gages = sizeof(dt)/sizeof(dt[0]);
+float konvert = 0.035274 * 0.3404255319;
+float calibration_factor = -14.15;
+bool flag;
+uint8_t exp_count = 0;
+float units[number_of_gages];
+float delta[number_of_gages];
+String print_value;
+
+
 // Делаем свою надстройку над классом HX711:
 class TENZO : public HX711 {
 public:
@@ -22,24 +37,9 @@ protected:
   float m_last_count;
 };
 
-TENZO gages[4];
+TENZO gages[number_of_gages];
 GButton butt1(BTN_PIN);
 
-// Определяем пины DT и SCK:
-byte dt[4] = {A0, A2, A4, 9};
-byte sck[4] = {A1, A3, A5, 10};
-// Определяем переменные:
-float konvert = 0.035274 * 0.3404255319;
-float calibration_factor = -14.15;
-bool flag;
-int exp_count = 0;
-float units[4];
-float delta[4];
-
-
-
-String print_value;
-int array_size = 4;
 void setup() {
   Serial.begin(9600);
   butt1.setDebounce(50);
@@ -48,7 +48,7 @@ void setup() {
   butt1.setType(HIGH_PULL);
   butt1.setDirection(NORM_OPEN);
 
-  for (int i = 0; i < array_size; i++){
+  for (int i = 0; i < number_of_gages; i++){
     gages[i].get_ready(dt[i], sck[i], calibration_factor);
   }
   
@@ -57,7 +57,7 @@ void setup() {
 
 void loop() {
     butt1.tick();
-    for (int i = 0; i < array_size; i++){
+    for (int i = 0; i < number_of_gages; i++){
       units[i] = gages[i].get_units(); 
     }
     print_value = "Gage #1:   " + (String)units[0] + "    " + "Gage #2: " + (String)units[1] + "    " + "Gage #3: " + (String)units[2] + "    " + "Gage #4: " + (String)units[3]; 
@@ -69,7 +69,7 @@ void loop() {
       while (flag == true){
         butt1.tick();
         
-        for (int i = 0; i < array_size; i++){
+        for (int i = 0; i < number_of_gages; i++){
           delta[i] = gages[i].get_delta(units[i]);
         }
         print_value = "Expiriment #" + (String)exp_count + " | " + "Gage #1:   " + (String)delta[0] + "    " + "Gage #2: " + (String)delta[1] + "    " + "Gage #3: " + (String)delta[2] + "    " + "Gage #4: " + (String)delta[3];
