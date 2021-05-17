@@ -4,8 +4,8 @@
 #define BTN_PIN 3
 
 // Определяем пины DT и SCK:
-byte dt[] = {A0, A2, A4, 9};
-byte sck[] = {A1, A3, A5, 10};
+byte dt[] = {A0, A2, A4, 10};
+byte sck[] = {A1, A3, A5, 9};
 
 // Определяем переменные:
 const uint8_t number_of_gages = sizeof(dt) / sizeof(dt[0]);
@@ -30,17 +30,14 @@ public:
     this->tare();
     this->set_scale(calibration_factor);
   }
-  float get_delta(float m_last_count)
+  float get_delta(float last_count)
   {
     return m_last_count - this->get_units() * konvert;
   }
-  float get_last_count()
-  {
-    return m_last_count;
-  }
 
 protected:
-  float m_last_count;
+  float last_count;
+  
 };
 
 TENZO gages[number_of_gages];
@@ -113,18 +110,18 @@ void get_debug()
   return;
 }
 
-void get_expiriment(float *units)
+void get_expiriment(float last_units[number_of_gages])
 {
   flag_exp = true;
   exp_count++;
-  Serial.println("Start Experiment # " + exp_count);
+  Serial.println("Start Experiment # " + (String)exp_count);
   while (flag_exp == true)
   {
     butt1.tick();
 
     for (int i = 0; i < number_of_gages; i++)
     {
-      delta[i] = gages[i].get_delta(units[i]);
+      delta[i] = gages[i].get_delta(last_units[i]);
     }
     print_value = "Expiriment #" + (String)exp_count + " | " + "Gage #1:   " + (String)delta[0] + "    " + "Gage #2: " + (String)delta[1] + "    " + "Gage #3: " + (String)delta[2] + "    " + "Gage #4: " + (String)delta[3];
     Serial.println(print_value);
