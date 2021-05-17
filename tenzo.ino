@@ -9,7 +9,7 @@ byte sck[] = {A1, A3, A5, 9};
 
 // Определяем переменные:
 const uint8_t number_of_gages = sizeof(dt) / sizeof(dt[0]);
-const float konvert = 0.035274 * 0.3404255319; // Временная константа для конвертирования необработанных попугаев с HX711
+const float konvert = 1; // Временная константа для конвертирования необработанных попугаев с HX711
 const float calibration_factor = -14.15;
 bool flag_exp;
 bool flag_debug;
@@ -32,12 +32,11 @@ public:
   }
   float get_delta(float last_count)
   {
-    return m_last_count - this->get_units() * konvert;
+    return last_count - this->get_units() * konvert;
   }
 
 protected:
   float last_count;
-  
 };
 
 TENZO gages[number_of_gages];
