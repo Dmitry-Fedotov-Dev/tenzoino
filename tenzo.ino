@@ -1,15 +1,17 @@
 #include "HX711.h"
 #include "GyverButton.h"
 
-#define BTN_PIN 3
+#define BTN_PIN 12
 
 // Определяем пины DT и SCK:
 byte dt[] = {A0, A2, A4, 10};
 byte sck[] = {A1, A3, A5, 9};
+/*byte dt[] = {A0, A2, A4, 10, 5, 11};
+byte sck[] = {A1, A3, A5, 9, 6, 3};*/
 
 // Определяем переменные:
 const uint8_t number_of_gages = sizeof(dt) / sizeof(dt[0]);
-const float konvert = 1; // Временная константа для конвертирования необработанных попугаев с HX711
+const float konvert = 4.4105; // Константа для преобразования голых показаний датчика в мкм
 const float calibration_factor = -14.15;
 bool flag_exp;
 bool flag_debug;
@@ -66,7 +68,7 @@ void loop()
   {
     units[i] = gages[i].get_units();
   }
-  print_value = "Gage #1:   " + (String)units[0] + "    " + "Gage #2: " + (String)units[1] + "    " + "Gage #3: " + (String)units[2] + "    " + "Gage #4: " + (String)units[3];
+  print_value = "Gage #1:   " + (String)units[0] + "    " + "Gage #2: " + (String)units[1] + "    " + "Gage #3: " + (String)units[2] + "    " + "Gage #4: " + (String)units[3] + "    " + "Gage #5: " + (String)units[4] + "    " + "Gage #6: " + (String)units[5];
   Serial.println(print_value);
   if (butt1.isTriple())
   {
@@ -97,7 +99,7 @@ void get_debug()
         current_gage = 0;
       }
     }
-    print_value = "Gage # " + (String)current_gage + "  |  Value:" + (String)units[current_gage];
+    print_value = (String)units[current_gage];
     Serial.println(print_value);
     if (butt1.isTriple())
     {
@@ -122,7 +124,7 @@ void get_expiriment(float last_units[number_of_gages])
     {
       delta[i] = gages[i].get_delta(last_units[i]);
     }
-    print_value = "Expiriment #" + (String)exp_count + " | " + "Gage #1:   " + (String)delta[0] + "    " + "Gage #2: " + (String)delta[1] + "    " + "Gage #3: " + (String)delta[2] + "    " + "Gage #4: " + (String)delta[3];
+    print_value = (String)exp_count + "  " + (String)delta[0] + "  " + (String)delta[1] + "  " + (String)delta[2] + "  " + (String)delta[3] + "  " + (String)delta[4] + "  " + (String)delta[5];
     Serial.println(print_value);
     if (butt1.isSingle())
     {
