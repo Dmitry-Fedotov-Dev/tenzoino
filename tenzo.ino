@@ -11,8 +11,10 @@ byte sck[] = {A1, A3, A5, 9, 6, 3};*/
 
 // Определяем переменные:
 const uint8_t number_of_gages = sizeof(dt) / sizeof(dt[0]);
-const float konvert = 4.4105; // Константа для преобразования голых показаний датчика в мкм
+const float konvert = 4.42105; // Константа для преобразования голых показаний датчика в мкм
 const float calibration_factor = -14.15;
+unsigned long start_time;
+unsigned long current_time;
 bool flag_exp;
 bool flag_debug;
 uint16_t exp_count = 0;
@@ -115,6 +117,7 @@ void get_expiriment(float last_units[number_of_gages])
 {
   flag_exp = true;
   exp_count++;
+  start_time = millis();
   Serial.println("Start Experiment # " + (String)exp_count);
   while (flag_exp == true)
   {
@@ -124,7 +127,8 @@ void get_expiriment(float last_units[number_of_gages])
     {
       delta[i] = gages[i].get_delta(last_units[i]);
     }
-    print_value = (String)exp_count + "  " + (String)delta[0] + "  " + (String)delta[1] + "  " + (String)delta[2] + "  " + (String)delta[3] + "  " + (String)delta[4] + "  " + (String)delta[5];
+    current_time = millis() - start_time;
+    print_value = (String)exp_count + "  " + (String)current_time + "  " + (String)delta[0] + "  " + (String)delta[1] + "  " + (String)delta[2] + "  " + (String)delta[3] + "  " + (String)delta[4] + "  " + (String)delta[5];
     Serial.println(print_value);
     if (butt1.isSingle())
     {
